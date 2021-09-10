@@ -63,4 +63,14 @@ class Participant extends Eloquent
     {
         return $this->belongsTo(Models::user(), 'user_id');
     }
+
+    public function deletedMessages()
+    {
+        return $this->belongsToMany(Message::class, 'messenger_deleted_messages', 'message_id', 'user_id')->where('user_id', currentEmployee()->id);
+    }
+
+    public function deletedThreads()
+    {
+        return $this->belongsToMany(Thread::class, 'messenger_deleted_threads', 'thread_id', 'user_id')->where('user_id', currentEmployee()->id);
+    }
 }

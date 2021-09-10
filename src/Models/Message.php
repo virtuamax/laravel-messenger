@@ -113,4 +113,9 @@ class Message extends Eloquent
                     });
             });
     }
+
+    public function messagesTheUserDeleted()
+    {
+        return $this->belongsToMany(Employee::class, 'messenger_deleted_messages', 'message_id', 'user_id')->where('user_id', currentEmployee()->id);
+    }
 }

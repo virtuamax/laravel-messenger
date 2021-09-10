@@ -444,4 +444,9 @@ class Thread extends Eloquent
     {
         return $this->userUnreadMessages($userId)->count();
     }
+
+    public function threadsTheUserDeleted()
+    {
+        return $this->belongsToMany(Employee::class, 'messenger_deleted_threads', 'thread_id', 'user_id')->where('user_id', currentEmployee()->id);
+    }
 }
