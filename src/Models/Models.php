@@ -1,6 +1,7 @@
 <?php
 
 namespace Cmgmyr\Messenger\Models;
+use App\Employee;
 
 class Models
 {
