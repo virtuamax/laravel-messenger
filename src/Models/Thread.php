@@ -450,4 +450,9 @@ class Thread extends Eloquent
     {
         return $this->belongsToMany(Employee::class, 'messenger_deleted_threads', 'thread_id', 'user_id')->where('user_id', currentEmployee()->id);
     }
+
+    public function group()
+    {
+        return $this->hasOne(MessengerGroups::class);
+    }
 }
