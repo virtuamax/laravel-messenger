@@ -3,6 +3,7 @@
 namespace Cmgmyr\Messenger\Models;
 
 use App\Employee;
+use App\MessengerGroups;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model as Eloquent;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
