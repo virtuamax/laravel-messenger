@@ -456,4 +456,9 @@ class Thread extends Eloquent
     {
         return $this->hasOne(MessengerGroups::class);
     }
+
+    public function undeletedMessages()
+    {
+        return $this->hasMany(Models::classname(Message::class), 'thread_id', 'id')->doesntHave('messagesTheUserDeleted');
+    }
 }
