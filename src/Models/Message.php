@@ -119,4 +119,9 @@ class Message extends Eloquent
     {
         return $this->belongsToMany(Employee::class, 'messenger_deleted_messages', 'message_id', 'user_id')->where('user_id', currentEmployee()->id);
     }
+
+    public function reply()
+    {
+        return $this->belongsTo(Models::classname(Message::class), 'parent_id', 'id');
+    }
 }
