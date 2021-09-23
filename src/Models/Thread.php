@@ -41,7 +41,7 @@ class Thread extends Eloquent
      * @var null|Models::user()|\Illuminate\Database\Eloquent\Model
      */
     protected $creatorCache;
-    
+
     /**
      * {@inheritDoc}
      */
@@ -63,7 +63,7 @@ class Thread extends Eloquent
     {
         return $this->hasMany(Models::classname(Message::class), 'thread_id', 'id')->where(function ($query) {
             $query->where('to_user_id', currentEmployee()->id)
-                  ->orWhere('system_message', 0);
+                ->orWhere('system_message', 0);
         });
     }
 
@@ -347,7 +347,7 @@ class Thread extends Eloquent
         return $participantNames->implode('name', ', ');
     }
 
-    public function participantsId($userId = null, $columns = ['id']) 
+    public function participantsId($userId = null, $columns = ['id'])
     {
         $participantsTable = Models::table('messenger_participants');
         $usersTable = Models::table('users');
@@ -395,18 +395,18 @@ class Thread extends Eloquent
         $usersTable = Models::table('users');
 
         switch ($dbDriver) {
-        case 'pgsql':
-        case 'sqlite':
-            $columnString = implode(" || ' ' || " . $tablePrefix . $usersTable . '.', $columns);
-            $selectString = '(' . $tablePrefix . $usersTable . '.' . $columnString . ') as name';
-            break;
-        case 'sqlsrv':
-            $columnString = implode(" + ' ' + " . $tablePrefix . $usersTable . '.', $columns);
-            $selectString = '(' . $tablePrefix . $usersTable . '.' . $columnString . ') as name';
-            break;
-        default:
-            $columnString = implode(", ' ', " . $tablePrefix . $usersTable . '.', $columns);
-            $selectString = 'concat(' . $tablePrefix . $usersTable . '.' . $columnString . ') as name';
+            case 'pgsql':
+            case 'sqlite':
+                $columnString = implode(" || ' ' || " . $tablePrefix . $usersTable . '.', $columns);
+                $selectString = '(' . $tablePrefix . $usersTable . '.' . $columnString . ') as name';
+                break;
+            case 'sqlsrv':
+                $columnString = implode(" + ' ' + " . $tablePrefix . $usersTable . '.', $columns);
+                $selectString = '(' . $tablePrefix . $usersTable . '.' . $columnString . ') as name';
+                break;
+            default:
+                $columnString = implode(", ' ', " . $tablePrefix . $usersTable . '.', $columns);
+                $selectString = 'concat(' . $tablePrefix . $usersTable . '.' . $columnString . ') as name';
         }
 
         return $selectString;
@@ -462,6 +462,9 @@ class Thread extends Eloquent
 
     public function undeletedMessages()
     {
-        return $this->hasMany(Models::classname(Message::class), 'thread_id', 'id')->doesntHave('messagesTheUserDeleted');
+        return $this->hasMany(Models::classname(Message::class), 'thread_id', 'id')->doesntHave('messagesTheUserDeleted')->where(function ($query) {
+            $query->where('to_user_id', currentEmployee()->id)
+                ->orWhere('system_message', 0);
+        });
     }
 }
