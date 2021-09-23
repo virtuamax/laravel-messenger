@@ -61,7 +61,10 @@ class Thread extends Eloquent
      */
     public function messages()
     {
-        return $this->hasMany(Models::classname(Message::class), 'thread_id', 'id');
+        return $this->hasMany(Models::classname(Message::class), 'thread_id', 'id')->where(function ($query) {
+            $query->where('to_user_id', currentEmployee()->id)
+                  ->orWhere('system_message', 0);
+        });
     }
 
     /**
