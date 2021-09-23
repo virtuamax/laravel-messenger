@@ -67,6 +67,13 @@ class Thread extends Eloquent
         });
     }
 
+    public function messagesNotification()
+    {
+        return $this->hasMany(Models::classname(Message::class), 'thread_id', 'id')->where(function ($query) {
+            $query->where('system_message', 0);
+        });
+    }
+
     /**
      * Returns the latest message from a thread.
      *
