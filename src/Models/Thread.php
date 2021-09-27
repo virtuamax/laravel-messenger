@@ -63,7 +63,8 @@ class Thread extends Eloquent
     {
         return $this->hasMany(Models::classname(Message::class), 'thread_id', 'id')->where(function ($query) {
             $query->where('to_user_id', currentEmployee()->id)
-                ->orWhere('system_message', 0);
+                ->orWhere('system_message', 0)
+                ->orWhere('system_message', 1);
         });
     }
 
