@@ -26,7 +26,7 @@ class Thread extends Eloquent
      *
      * @var array
      */
-    protected $fillable = ['subject', 'company_id'];
+    protected $fillable = ['subject', 'company_id', 'moderator'];
 
     /**
      * The attributes that should be mutated to dates.
@@ -245,6 +245,20 @@ class Thread extends Eloquent
         });
     }
 
+    public function addModerator($userId)
+    {
+        $userIds = is_array($userId) ? $userId : (array) func_get_args();
+
+        collect($userIds)->each(function ($userId) {
+            $participant = Models::participant()->where('user_id', $userId)->where('thread_id', $this->id)->first();
+
+            if($participant) {
+                $participant->moderator = 1;
+                $participant->save();
+            }
+        });
+    }
+
     /**
      * Remove participants from thread.
      *
@@ -257,6 +271,20 @@ class Thread extends Eloquent
         $userIds = is_array($userId) ? $userId : (array) func_get_args();
 
         Models::participant()->where('thread_id', $this->id)->whereIn('user_id', $userIds)->delete();
+    }
+
+    public function removeModerator($userId)
+    {
+        $userIds = is_array($userId) ? $userId : (array) func_get_args();
+
+        collect($userIds)->each(function ($userId) {
+            $participant = Models::participant()->where('user_id', $userId)->where('thread_id', $this->id)->first();
+            
+            if($participant) {
+                $participant->moderator = 0;
+                $participant->save();
+            }
+        });
     }
 
     /**
