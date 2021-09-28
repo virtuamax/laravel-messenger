@@ -470,9 +470,10 @@ class Thread extends Eloquent
 
     public function undeletedMessages()
     {
-        return $this->hasMany(Models::classname(Message::class), 'thread_id', 'id')->doesntHave('messagesTheUserDeleted')->where(function ($query) {
-            $query->where('to_user_id', currentEmployee()->id)
-                ->orWhere('system_message', 0);
-        });
+        return $this->hasMany(Models::classname(Message::class), 'thread_id', 'id')->doesntHave('messagesTheUserDeleted');
+        // return $this->hasMany(Models::classname(Message::class), 'thread_id', 'id')->doesntHave('messagesTheUserDeleted')->where(function ($query) {
+        //     $query->where('to_user_id', currentEmployee()->id)
+        //         ->orWhere('system_message', 0);
+        // });
     }
 }
