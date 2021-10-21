@@ -75,6 +75,13 @@ class Thread extends Eloquent
         });
     }
 
+    public function messagesSystemNotification()
+    {
+        return $this->hasMany(Models::classname(Message::class), 'thread_id', 'id')->where(function ($query) {
+            $query->where('system_message', 1);
+        });
+    }
+
     /**
      * Returns the latest message from a thread.
      *
@@ -473,6 +480,7 @@ class Thread extends Eloquent
             return $message->updated_at->gt($participant->last_read);
         });
     }
+    
 
     /**
      * Returns count of unread messages in thread for given user.
