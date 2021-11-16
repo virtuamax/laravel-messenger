@@ -35,6 +35,8 @@ class Thread extends Eloquent
      */
     protected $dates = ['deleted_at'];
 
+    protected $appends = ['last_message_text', 'last_message_timestamp', 'last_message_at', 'unread_messages', 'participants_string', 'participants_id'];
+
     /**
      * Internal cache for creator.
      *
@@ -512,4 +514,53 @@ class Thread extends Eloquent
         //         ->orWhere('system_message', 0);
         // });
     }
+
+    public function getLastMessageTextAttribute()
+    {
+        $last = $this->undeletedMessages->last();
+        if($last) {
+            if($last->body == '') {
+                if($last->attachment) {
+                    return '<span style="font-style: italic;">Imagem</span>';
+                } else {
+                    return '<span style="font-style: italic;">Arquivo</span>';
+                }
+            } else {
+                return '<span>'.strip_tags(str_replace('&nbsp;', ' ', $last->body)).'</span>';
+            }
+        } else {
+            return '<span style="visibility: hidden">NULL</span>';
+        }
+    }
+
+    public function getLastMessageTimestampAttribute()
+    {
+        $last = $this->undeletedMessages->last();
+        if($last) {
+            return $last->created_at;
+        } else {
+            return $this->created_at;
+        }
+    }
+
+    public function getLastMessageAtAttribute()
+    {
+        return $this->last_message_timestamp->format('H:i');
+    }
+
+    public function getUnreadMessagesAttribute()
+    {
+        return $this->userUnreadMessagesCount(currentEmployee()->id);
+    }
+
+    public function getParticipantsStringAttribute()
+    {
+        return $this->participantsString(currentEmployee()->id);
+    }
+
+    public function getParticipantsIdAttribute()
+    {
+        return $this->participantsId(currentEmployee()->id);
+    }
+    
 }
