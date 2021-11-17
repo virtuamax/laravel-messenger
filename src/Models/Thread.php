@@ -562,5 +562,4 @@ class Thread extends Eloquent
     {
         return $this->participantsId(currentEmployee()->id);
     }
-    
 }
