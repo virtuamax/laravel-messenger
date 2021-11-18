@@ -261,7 +261,7 @@ class Thread extends Eloquent
         collect($userIds)->each(function ($userId) {
             $participant = Models::participant()->where('user_id', $userId)->where('thread_id', $this->id)->first();
 
-            if($participant) {
+            if ($participant) {
                 $participant->moderator = 1;
                 $participant->save();
             }
@@ -288,8 +288,8 @@ class Thread extends Eloquent
 
         collect($userIds)->each(function ($userId) {
             $participant = Models::participant()->where('user_id', $userId)->where('thread_id', $this->id)->first();
-            
-            if($participant) {
+
+            if ($participant) {
                 $participant->moderator = 0;
                 $participant->save();
             }
@@ -482,7 +482,7 @@ class Thread extends Eloquent
             return $message->updated_at->gt($participant->last_read);
         });
     }
-    
+
 
     /**
      * Returns count of unread messages in thread for given user.
@@ -518,15 +518,15 @@ class Thread extends Eloquent
     public function getLastMessageTextAttribute()
     {
         $last = $this->undeletedMessages->last();
-        if($last) {
-            if($last->body == '') {
-                if($last->attachment) {
+        if ($last) {
+            if ($last->body == '') {
+                if ($last->attachment) {
                     return '<span style="font-style: italic;">Imagem</span>';
                 } else {
                     return '<span style="font-style: italic;">Arquivo</span>';
                 }
             } else {
-                return '<span>'.strip_tags(str_replace('&nbsp;', ' ', $last->body)).'</span>';
+                return '<span>' . strip_tags(str_replace('&nbsp;', ' ', $last->body)) . '</span>';
             }
         } else {
             return '<span style="visibility: hidden">NULL</span>';
@@ -536,7 +536,7 @@ class Thread extends Eloquent
     public function getLastMessageTimestampAttribute()
     {
         $last = $this->undeletedMessages->last();
-        if($last) {
+        if ($last) {
             return $last->created_at;
         } else {
             return $this->created_at;
@@ -561,5 +561,16 @@ class Thread extends Eloquent
     public function getParticipantsIdAttribute()
     {
         return $this->participantsId(currentEmployee()->id);
+    }
+
+    public function getQtdMessagesAttribute()
+    {
+        $last = $this->undeletedMessages->last();
+
+        if ($last) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
