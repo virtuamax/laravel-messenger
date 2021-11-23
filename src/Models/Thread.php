@@ -546,7 +546,12 @@ class Thread extends Eloquent
 
     public function getLastMessageAtAttribute()
     {
-        return $this->last_message_timestamp->format('H:i');
+        $last = $this->undeletedMessages->last();
+        if($last) {
+            return $this->last_message_timestamp->format('H:i');
+        } else {
+            return false;
+        }
     }
 
     public function getUnreadMessagesAttribute()
