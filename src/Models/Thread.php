@@ -35,7 +35,7 @@ class Thread extends Eloquent
      */
     protected $dates = ['deleted_at'];
 
-    protected $appends = ['last_message_text', 'last_message_timestamp', 'last_message_at', 'unread_messages', 'participants_string', 'participants_id'];
+    protected $appends = ['last_message_text', 'last_message_timestamp', 'last_message_at', 'unread_messages', 'participants_string', 'participants_id', 'qtd_messages'];
 
     /**
      * Internal cache for creator.
@@ -526,7 +526,7 @@ class Thread extends Eloquent
                     return '<span style="font-style: italic;">Arquivo</span>';
                 }
             } else {
-                return '<span>' . strip_tags(str_replace('&nbsp;', ' ', $last->body)) . '</span>';
+                return '<span>' . strip_tags(str_replace('&nbsp;', ' ', $last->body)) . 'qtd_messages</span>';
             }
         } else {
             return '<span style="visibility: hidden">NULL</span>';
@@ -568,9 +568,14 @@ class Thread extends Eloquent
         $last = $this->undeletedMessages->last();
 
         if ($last) {
-            return true;
+            return 1;
         } else {
-            return false;
+            return 0;
         }
+    }
+
+    public function firstMessage()
+    {
+        return $this->hasOne(MessengerFirstMessage::class);
     }
 }
