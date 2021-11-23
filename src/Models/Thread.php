@@ -527,7 +527,7 @@ class Thread extends Eloquent
                     return '<span style="font-style: italic;">Arquivo</span>';
                 }
             } else {
-                return '<span>' . strip_tags(str_replace('&nbsp;', ' ', $last->body)) . 'qtd_messages</span>';
+                return '<span>' . strip_tags(str_replace('&nbsp;', ' ', $last->body)) . '</span>';
             }
         } else {
             return '<span style="visibility: hidden">NULL</span>';
