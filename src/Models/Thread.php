@@ -546,9 +546,9 @@ class Thread extends Eloquent
     {
         $last = $this->undeletedMessages->last();
         if($last) {
-            return $this->last_message_timestamp->format('H:i');
+            return $this->last_message_timestamp->diffInDays(now()) > 0 ? $this->last_message_timestamp->format('d/m/Y H:i') : $this->last_message_timestamp->format('H:i');
         } else {
-            return false;
+            return 'false';
         }
     }
 
