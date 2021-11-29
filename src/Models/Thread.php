@@ -545,8 +545,16 @@ class Thread extends Eloquent
     public function getLastMessageAtAttribute()
     {
         $last = $this->undeletedMessages->last();
+        
+        
         if($last) {
-            return $this->last_message_timestamp->diffInDays(now()) > 0 ? $this->last_message_timestamp->format('d/m/Y H:i') : $this->last_message_timestamp->format('H:i');
+            $date1 = $this->last_message_timestamp;
+            $date2 = now();
+    
+            if ($date1 < $date2)
+                return $this->created_at->format('d/m/Y H:i');
+            else
+                return $this->created_at->format('H:i');
         } else {
             return 'false';
         }
