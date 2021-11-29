@@ -130,7 +130,7 @@ class Message extends Eloquent
     public function getMessageTimestampAtAttribute()
     {
         $date1 = $this->created_at;
-        $date2 = now();
+        $date2 = \Carbon\Carbon::parse(now()->format('Y-m-d') . '00:00:00');
 
         if ($date1 < $date2)
             return $this->created_at->format('d/m/Y H:i');

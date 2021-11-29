@@ -535,6 +535,7 @@ class Thread extends Eloquent
     public function getLastMessageTimestampAttribute()
     {
         $last = $this->undeletedMessages->last();
+
         if ($last) {
             return $last->created_at;
         } else {
@@ -546,17 +547,17 @@ class Thread extends Eloquent
     {
         $last = $this->undeletedMessages->last();
         
-        
         if($last) {
-            $date1 = $this->last_message_timestamp;
-            $date2 = now();
-    
-            if ($date1 < $date2)
-                return $this->created_at->format('d/m/Y H:i');
+            $date1 = $last->created_at;
+            $date2 = \Carbon\Carbon::parse(now()->format('Y-m-d') . '00:00:00');
+
+            if ($date1 < $date2) {
+                return $last->created_at->format('d/m/Y H:i');
+            }
             else
-                return $this->created_at->format('H:i');
+                return $last->created_at->format('H:i');
         } else {
-            return 'false';
+            return '';
         }
     }
 
