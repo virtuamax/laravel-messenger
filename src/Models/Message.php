@@ -39,6 +39,8 @@ class Message extends Eloquent
      */
     protected $dates = ['deleted_at'];
 
+    protected $appends = ['message_timestamp_at'];
+
     /**
      * {@inheritDoc}
      */
@@ -123,5 +125,16 @@ class Message extends Eloquent
     public function reply()
     {
         return $this->belongsTo(Models::classname(Message::class), 'parent_id', 'id');
+    }
+
+    public function getMessageTimestampAtAttribute()
+    {
+        $date1 = $this->created_at;
+        $date2 = now();
+
+        if ($date1 < $date2)
+            return $this->created_at->format('d/m/Y H:i');
+        else
+            return $this->created_at->format('H:i');
     }
 }
