@@ -36,7 +36,7 @@ class Thread extends Eloquent
      */
     protected $dates = ['deleted_at'];
 
-    protected $appends = ['last_message_text', 'last_message_timestamp', 'last_message_at', 'unread_messages', 'participants_string', 'participants_id', 'qtd_messages'];
+    protected $appends = ['last_message_text', 'last_message_timestamp', 'last_message_at', 'unread_messages', 'participants_string', 'participants_id', 'qtd_messages', 'is_group'];
 
     /**
      * Internal cache for creator.
@@ -574,6 +574,15 @@ class Thread extends Eloquent
     public function getParticipantsIdAttribute()
     {
         return $this->participantsId(currentEmployee()->id);
+    }
+
+    public function getIsGroupAttribute()
+    {
+        if($this->group) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public function getQtdMessagesAttribute()
