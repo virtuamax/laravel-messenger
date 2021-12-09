@@ -36,7 +36,7 @@ class Thread extends Eloquent
      */
     protected $dates = ['deleted_at'];
 
-    protected $appends = ['last_message_text', 'last_message_timestamp', 'last_message_at', 'unread_messages', 'participants_string', 'participants_id', 'qtd_messages', 'is_group'];
+    protected $appends = ['last_message_text', 'last_message_timestamp', 'last_message_at', 'unread_messages', 'participants_string', 'participants_id', 'qtd_messages', 'is_group', 'is_emoji'];
 
     /**
      * Internal cache for creator.
@@ -514,18 +514,40 @@ class Thread extends Eloquent
         // });
     }
 
+    public function getIsEmojiAttribute()
+    {
+        $last = $this->undeletedMessages->last();
+
+        if ($last) {
+            $emojiRegex = '/([0-9#][\x{20E3}])|[\x{00ae}\x{00a9}\x{203C}\x{2047}\x{2048}\x{2049}\x{3030}\x{303D}\x{2139}\x{2122}\x{3297}\x{3299}][\x{FE00}-\x{FEFF}]?|[\x{2190}-\x{21FF}][\x{FE00}-\x{FEFF}]?|[\x{2300}-\x{23FF}][\x{FE00}-\x{FEFF}]?|[\x{2460}-\x{24FF}][\x{FE00}-\x{FEFF}]?|[\x{25A0}-\x{25FF}][\x{FE00}-\x{FEFF}]?|[\x{2600}-\x{27BF}][\x{FE00}-\x{FEFF}]?|[\x{2900}-\x{297F}][\x{FE00}-\x{FEFF}]?|[\x{2B00}-\x{2BF0}][\x{FE00}-\x{FEFF}]?|[\x{1F000}-\x{1F6FF}][\x{FE00}-\x{FEFF}]?/u';
+            $text = preg_replace($emojiRegex, '', $last->body);
+
+            preg_match_all('/([0-9#][\x{20E3}])|[\x{00ae}\x{00a9}\x{203C}\x{2047}\x{2048}\x{2049}\x{3030}\x{303D}\x{2139}\x{2122}\x{3297}\x{3299}][\x{FE00}-\x{FEFF}]?|[\x{2190}-\x{21FF}][\x{FE00}-\x{FEFF}]?|[\x{2300}-\x{23FF}][\x{FE00}-\x{FEFF}]?|[\x{2460}-\x{24FF}][\x{FE00}-\x{FEFF}]?|[\x{25A0}-\x{25FF}][\x{FE00}-\x{FEFF}]?|[\x{2600}-\x{27BF}][\x{FE00}-\x{FEFF}]?|[\x{2900}-\x{297F}][\x{FE00}-\x{FEFF}]?|[\x{2B00}-\x{2BF0}][\x{FE00}-\x{FEFF}]?|[\x{1F000}-\x{1F6FF}][\x{FE00}-\x{FEFF}]?/u', $last->body, $emojis);
+            $isEmoji = !empty($emojis[0]) ? true : false;
+
+            if ($text == '' && $isEmoji)
+                return true;
+        }
+
+        return false;
+    }
+
     public function getLastMessageTextAttribute()
     {
         $last = $this->undeletedMessages->last();
+
         if ($last) {
             if ($last->body == '') {
                 if ($last->attachment) {
                     return '<span style="font-style: italic;">Imagem</span>';
                 } else {
-                    return '<span style="font-style: italic;">Arquivo</span>';
+                    return '<span style="font-style: italic;">' . strip_tags(str_replace('&nbsp;', ' ', $last->file_name)) . '</span>';
                 }
             } else {
-                return '<span>' . strip_tags(str_replace('&nbsp;', ' ', $last->body)) . '</span>';
+                if ($last->body == 'Esta mensagem foi excluída')
+                    return '<span style="font-style: italic;">' . strip_tags(str_replace('&nbsp;', ' ', $last->body)) . '</span>';
+                else
+                    return '<span>' . strip_tags(str_replace('&nbsp;', ' ', $last->body)) . '</span>';
             }
         } else {
             return '<span style="visibility: hidden">NULL</span>';
@@ -546,15 +568,14 @@ class Thread extends Eloquent
     public function getLastMessageAtAttribute()
     {
         $last = $this->undeletedMessages->last();
-        
-        if($last) {
+
+        if ($last) {
             $date1 = $last->created_at;
             $date2 = \Carbon\Carbon::parse(now()->format('Y-m-d') . '00:00:00');
 
             if ($date1 < $date2) {
                 return $last->created_at->format('d/m/Y H:i');
-            }
-            else
+            } else
                 return $last->created_at->format('H:i');
         } else {
             return '';
@@ -578,7 +599,7 @@ class Thread extends Eloquent
 
     public function getIsGroupAttribute()
     {
-        if($this->group) {
+        if ($this->group) {
             return true;
         } else {
             return false;
